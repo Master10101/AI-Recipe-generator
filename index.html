@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Recipe Generator</title>
+<style>
+body{font-family:Poppins,sans-serif;background:#fff7ef;margin:0;padding:30px;color:#333;}
+.container{max-width:700px;margin:auto;background:#fff;padding:25px;border-radius:20px;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+h1{text-align:center;color:#e07a5f;}
+input,button{width:100%;padding:10px;margin:10px 0;border-radius:10px;border:1px solid #ccc;font-size:16px;}
+button{background:#e07a5f;color:#fff;border:none;cursor:pointer;}
+button:hover{background:#d65a31;}
+.output{background:#fafafa;border-radius:15px;padding:15px;white-space:pre-line;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>AI Recipe Generator 🍳</h1>
+  <input id="ingredients" placeholder="Ingredients you have (e.g. chicken, rice, onion)">
+  <input id="dish" placeholder="Dish you want (e.g. chicken fried rice, chocolate cake)">
+  <button onclick="generateRecipe()">Generate Recipe</button>
+  <div id="output" class="output"></div>
+</div>
+
+<script>
+async function generateRecipe(){
+  const ingredients=document.getElementById("ingredients").value.trim();
+  const dish=document.getElementById("dish").value.trim();
+  const out=document.getElementById("output");
+  if(!ingredients||!dish){out.textContent="⚠️ Please fill both boxes.";return;}
+  out.textContent="Generating your recipe... 🍳";
+
+  try{
+    const res=await fetch("/api/generate",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ingredients,dish})
+    });
+    const data=await res.json();
+    out.textContent=data.result||data.error;
+  }catch(e){
+    out.textContent="❌ Error: "+e.message;
+  }
+}
+</script>
+</body>
+</html>
